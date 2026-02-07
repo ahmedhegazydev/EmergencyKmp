@@ -29,7 +29,9 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+
+            implementation(libs.multiplatform.settings)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -48,6 +50,5 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
-    implementation("com.russhwolf:multiplatform-settings:1.2.0")
 
 }

@@ -24,6 +24,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".EmergencyListenService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <activity
+            android:name=".EmergencyConfirmActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
     </application>
 
 </manifest>
