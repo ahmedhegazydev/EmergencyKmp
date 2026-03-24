@@ -1,6 +1,9 @@
+package com.example.emergencykmp
+
 import com.russhwolf.settings.Settings
 
 class SettingsRepo(private val settings: Settings) {
+
     fun save(s: EmergencySettings) {
         settings.putString("keyword", s.keyword)
         settings.putString("phone", s.phoneNumber)

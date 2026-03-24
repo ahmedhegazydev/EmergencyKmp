@@ -9,4 +9,9 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.ktor) apply false
+
+//    id 'com.google.devtools.ksp'
+//    id ('com.google.dagger.hilt.android')
+//    id("com.google.devtools.ksp") version "2.3.4" apply false
+
 }

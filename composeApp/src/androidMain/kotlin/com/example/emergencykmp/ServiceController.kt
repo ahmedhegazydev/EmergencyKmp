@@ -4,13 +4,21 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
 
-object ServiceController {
-    fun start(context: Context) {
+interface EmergencyServiceController {
+    fun start()
+    fun stop()
+}
+
+class AndroidEmergencyServiceController(
+    private val context: Context
+) : EmergencyServiceController {
+
+    override fun start() {
         val i = Intent(context, EmergencyListenService::class.java)
         ContextCompat.startForegroundService(context, i)
     }
 
-    fun stop(context: Context) {
+    override fun stop() {
         val i = Intent(context, EmergencyListenService::class.java)
         context.stopService(i)
     }

@@ -1,24 +1,20 @@
 package com.example.emergencykmp
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
@@ -33,42 +29,70 @@ class MainActivity : ComponentActivity() {
     ) { /* ignore for now */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-//        setContent {
-//            App()
-//        }
         setContent {
             MaterialTheme {
-                Column(Modifier.fillMaxSize().padding(16.dp)) {
-                    Text("Emergency KMP (Android)", style = MaterialTheme.typography.headlineSmall)
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Button(onClick = { requestPerms.launch(perms) }) {
-                        Text("Request Permissions")
-                    }
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Button(onClick = { ServiceController.start(this@MainActivity) }) {
-                        Text("Enable Emergency Mode (Start Service)")
-                    }
-
-                    Spacer(Modifier.height(10.dp))
-
-                    OutlinedButton(onClick = { ServiceController.stop(this@MainActivity) }) {
-                        Text("Disable Emergency Mode (Stop Service)")
-                    }
-                }
+//                MainScreen(
+//                    onRequestPermissions = { requestPerms.launch(perms) },
+//                    onOpenSettings = {
+//                        startActivity(Intent(this, SettingsActivity::class.java))
+//                    }
+//                )
+                AppNavHost(
+                    onRequestPermissions = { requestPerms.launch(perms) },
+                )
             }
         }
     }
 }
 
-@Preview
+@Composable
+fun MainScreen(
+    onRequestPermissions: () -> Unit=  {},
+    onOpenSettings: () -> Unit
+) {
+    // ✅ دي اللي اتفقنا عليها: controller من Koin
+    val service: EmergencyServiceController = koinInject()
+
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Emergency KMP (Android)", style = MaterialTheme.typography.headlineSmall)
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = onRequestPermissions) {
+            Text("Request Permissions")
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = { service.start() }) {
+            Text("Enable Emergency Mode (Start Service)")
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        OutlinedButton(onClick = { service.stop() }) {
+            Text("Disable Emergency Mode (Stop Service)")
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        Button(onClick = onOpenSettings) {
+            Text("Open Settings")
+        }
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 fun AppAndroidPreview() {
-    App()
+    MaterialTheme {
+        // Preview من غير Koin injection
+        MainScreen(
+            onRequestPermissions = {},
+            onOpenSettings = {}
+        )
+    }
 }

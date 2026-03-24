@@ -12,8 +12,11 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import androidx.core.app.NotificationCompat
+import com.russhwolf.settings.Settings
 
 class EmergencyListenService : Service() {
+
+    private lateinit var repo: SettingsRepo
 
     private var speech: SpeechRecognizer? = null
 
@@ -22,6 +25,8 @@ class EmergencyListenService : Service() {
         startForeground(1001, buildNotification("Emergency mode ON"))
 
         startListening()
+        repo = SettingsRepo(Settings())
+
     }
 
     private fun startListening() {
@@ -36,11 +41,14 @@ class EmergencyListenService : Service() {
                             .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                             .orEmpty()
 
-                        // ✅ مؤقتًا: اعتبر أي كلام trigger علشان نجرب الديمو بسرعة
-                        // بعدين هنربطه بـ keyword من Settings
-                        if (texts.isNotEmpty()) {
-                            openConfirm()
-                        }
+                        val s = repo.load()
+                        if (!s.isValid()) return
+
+                        val keyword = s.keyword.trim().lowercase()
+                        val hit = texts.any { it.lowercase().contains(keyword) }
+
+                        if (hit) openConfirm()
+
 
                         restart()
                     }
